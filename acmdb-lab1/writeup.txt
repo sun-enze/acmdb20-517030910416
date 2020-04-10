@@ -1,0 +1,16 @@
+这是我第二次写Java，而且和第一次写编译器的时间差了好久，所以对于Java的一些操作还不太熟练，比如字符串equals还是习惯性的写成=。
+具体表示如下
+在TupleDesc里
+	fields存相关信息
+在Tuple里
+	schema存TupleDesc，recordId存RecordId，tuple_record存fields信息
+在Catalog里
+	Table类代表了file，name和pkeyField
+	tableIdMap存Id到table的映射
+	tableNameMap存Name到table的映射
+在BufferPool里
+	ConcurrentHashMap存PageId到Page的映射
+在HeapPageId里
+	RecordId存HeapPageId
+在HeapFile里
+	创建HeapFileIterator类
