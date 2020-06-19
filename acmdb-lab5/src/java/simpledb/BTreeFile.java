@@ -692,16 +692,22 @@ public class BTreeFile implements DbFile {
 	 */
 	protected void stealFromLeafPage(BTreeLeafPage page, BTreeLeafPage sibling,
 			BTreeInternalPage parent, BTreeEntry entry, boolean isRightSibling) throws DbException {
-		int numRemoved = (sibling.getNumTuples() - page.getNumTuples()) / 2;
-		Iterator<Tuple> tupleIter = sibling.iterator();
-		if(!isRightSibling) {
-			tupleIter = sibling.reverseIterator();
+		int numTomove = (sibling.getNumTuples() - page.getNumTuples()) / 2;
+		Tuple[] tupleTomove = new Tuple[numTomove];
+		Iterator<Tuple> it;
+		if (isRightSibling) it = sibling.iterator();
+		else it = sibling.reverseIterator();
+
+		for (int i = 0; i < numTomove; i++)
+			tupleTomove[i] = it.next();
+
+		for (Tuple tuple : tupleTomove){
+			sibling.deleteTuple(tuple);
+			page.insertTuple(tuple);
 		}
-		for(int i = 0; i < numRemoved && tupleIter.hasNext(); i++) {
-			Tuple curTuple = tupleIter.next();
-			sibling.deleteTuple(curTuple);
-			page.insertTuple(curTuple);
-		}
+		if (isRightSibling) entry.setKey(page.reverseIterator().next().getField(keyField));
+		else entry.setKey(sibling.reverseIterator().next().getField(keyField));
+		parent.updateEntry(entry);
 		// some code goes here
         //
         // Move some of the tuples from the sibling to the page so
