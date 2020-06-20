@@ -1,8 +1,5 @@
 package simpledb;
 
-import com.sun.corba.se.impl.interceptors.PICurrent;
-import org.omg.CORBA.TIMEOUT;
-
 import javax.xml.crypto.Data;
 import java.io.*;
 import java.lang.reflect.Array;
@@ -34,8 +31,8 @@ public class BufferPool {
     private MyLock myLock;
 
     /** Default number of pages passed to the constructor. This is used by
-     other classes. BufferPool should use the numPages argument to the
-     constructor instead. */
+    other classes. BufferPool should use the numPages argument to the
+    constructor instead. */
     public static final int DEFAULT_PAGES = 50;
 
     /**
@@ -50,17 +47,17 @@ public class BufferPool {
     }
 
     public static int getPageSize() {
-        return pageSize;
+      return pageSize;
     }
 
     // THIS FUNCTION SHOULD ONLY BE USED FOR TESTING!!
     public static void setPageSize(int pageSize) {
-        BufferPool.pageSize = pageSize;
+    	BufferPool.pageSize = pageSize;
     }
 
     // THIS FUNCTION SHOULD ONLY BE USED FOR TESTING!!
     public static void resetPageSize() {
-        BufferPool.pageSize = PAGE_SIZE;
+    	BufferPool.pageSize = PAGE_SIZE;
     }
 
     /**
@@ -79,7 +76,7 @@ public class BufferPool {
      * @param perm the requested permissions on the page
      */
     public Page getPage(TransactionId tid, PageId pid, Permissions perm)
-            throws TransactionAbortedException, DbException {
+        throws TransactionAbortedException, DbException {
         boolean flag = myLock.acquireLock(tid, pid, perm);
         while(!flag) {
             Thread.yield();
@@ -134,7 +131,7 @@ public class BufferPool {
      * @param commit a flag indicating whether we should commit or abort
      */
     public void transactionComplete(TransactionId tid, boolean commit)
-            throws IOException {
+        throws IOException {
         HashSet<PageId> lockedPage = myLock.getExclusivePage(tid);
         if(lockedPage != null) {
             for (PageId pid : lockedPage) {
@@ -171,7 +168,7 @@ public class BufferPool {
      * @param t the tuple to add
      */
     public void insertTuple(TransactionId tid, int tableId, Tuple t)
-            throws DbException, IOException, TransactionAbortedException {
+        throws DbException, IOException, TransactionAbortedException {
         DbFile file = Database.getCatalog().getDatabaseFile(tableId);
         ArrayList<Page> pageList = file.insertTuple(tid, t);
         for(Page page : pageList) {
@@ -195,7 +192,7 @@ public class BufferPool {
      * @param t the tuple to delete
      */
     public  void deleteTuple(TransactionId tid, Tuple t)
-            throws DbException, IOException, TransactionAbortedException {
+        throws DbException, IOException, TransactionAbortedException {
         int tableId = t.getRecordId().getPageId().getTableId();
         DbFile file = Database.getCatalog().getDatabaseFile(tableId);
         ArrayList<Page> pageList = file.deleteTuple(tid, t);
@@ -219,12 +216,13 @@ public class BufferPool {
     }
 
     /** Remove the specific page id from the buffer pool.
-     Needed by the recovery manager to ensure that the
-     buffer pool doesn't keep a rolled back page in its
-     cache.
-     Also used by B+ tree files to ensure that deleted pages
-     are removed from the cache so they can be reused safely
-     */
+        Needed by the recovery manager to ensure that the
+        buffer pool doesn't keep a rolled back page in its
+        cache.
+
+        Also used by B+ tree files to ensure that deleted pages
+        are removed from the cache so they can be reused safely
+    */
     public synchronized void discardPage(PageId pid) {
         bufferMap.remove(pid);
     }

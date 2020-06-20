@@ -26,7 +26,6 @@ public class HashEquiJoin extends Operator {
      *            Iterator for the right(inner) relation to join
      */
     public HashEquiJoin(JoinPredicate p, DbIterator child1, DbIterator child2) {
-        // some code goes here
         this.p = p;
         this.child1 = child1;
         this.child2 = child2;
@@ -34,32 +33,27 @@ public class HashEquiJoin extends Operator {
     }
 
     public JoinPredicate getJoinPredicate() {
-        // some code goes here
         return p;
     }
 
     public TupleDesc getTupleDesc() {
-        // some code goes here
         return td;
     }
 
     public String getJoinField1Name()
     {
-        // some code goes here
-	    return child1.getTupleDesc().getFieldName(p.getField1());
+        return child1.getTupleDesc().getFieldName(p.getField1());
     }
 
     public String getJoinField2Name()
     {
-        // some code goes here
-        return child2.getTupleDesc().getFieldName(p.getField1());
+        return child2.getTupleDesc().getFieldName(p.getField2());
     }
 
     private Tuple curch1 = null;
 
     public void open() throws DbException, NoSuchElementException,
             TransactionAbortedException {
-        // some code goes here
         super.open();
         child1.open();
         child2.open();
@@ -67,7 +61,6 @@ public class HashEquiJoin extends Operator {
     }
 
     public void close() {
-        // some code goes here
         super.close();
         child1.close();
         child2.close();
@@ -75,7 +68,6 @@ public class HashEquiJoin extends Operator {
     }
 
     public void rewind() throws DbException, TransactionAbortedException {
-        // some code goes here
         child1.rewind();
         child2.rewind();
         curch1 = null;
@@ -102,8 +94,7 @@ public class HashEquiJoin extends Operator {
      * @see JoinPredicate#filter
      */
     protected Tuple fetchNext() throws TransactionAbortedException, DbException {
-        // some code goes here
-        if(child1 == null || child2 == null) return null;
+        if(child1 == null || child2 == null)return null;
         if(curch1 == null) {
             if(child1.hasNext()) {
                 curch1 = child1.next();
@@ -142,7 +133,6 @@ public class HashEquiJoin extends Operator {
 
     @Override
     public DbIterator[] getChildren() {
-        // some code goes here
         DbIterator children[] = new DbIterator[2];
         children[0] = child1;
         children[1] = child2;
@@ -151,7 +141,6 @@ public class HashEquiJoin extends Operator {
 
     @Override
     public void setChildren(DbIterator[] children) {
-        // some code goes here
         child1 = children[0];
         child2 = children[1];
     }

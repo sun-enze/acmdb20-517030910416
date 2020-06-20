@@ -12,6 +12,7 @@ public class IndexPredicate implements Serializable {
 
     private Predicate.Op op;
     private Field fvalue;
+	
     /**
      * Constructor.
      *
@@ -22,18 +23,15 @@ public class IndexPredicate implements Serializable {
      * @see Predicate
      */
     public IndexPredicate(Predicate.Op op, Field fvalue) {
-        // some code goes here
         this.op = op;
         this.fvalue = fvalue;
     }
 
     public Field getField() {
-        // some code goes here
         return fvalue;
     }
 
     public Predicate.Op getOp() {
-        // some code goes here
         return op;
     }
 
@@ -43,7 +41,6 @@ public class IndexPredicate implements Serializable {
         @param ipd The field to compare against.
     */
     public boolean equals(IndexPredicate ipd) {
-        // some code goes here
         if(ipd == null) return false;
         return (op.equals(ipd.op) && fvalue.equals(ipd.fvalue));
     }

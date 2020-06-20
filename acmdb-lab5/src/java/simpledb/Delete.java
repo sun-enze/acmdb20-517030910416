@@ -32,25 +32,21 @@ public class Delete extends Operator {
     }
 
     public TupleDesc getTupleDesc() {
-        // some code goes here
         return td;
     }
 
     public void open() throws DbException, TransactionAbortedException {
-        // some code goes here
         super.open();
         child.open();
         hasDelete = false;
     }
 
     public void close() {
-        // some code goes here
         super.close();
         child.close();
     }
 
     public void rewind() throws DbException, TransactionAbortedException {
-        // some code goes here
         child.rewind();
     }
 
@@ -64,11 +60,9 @@ public class Delete extends Operator {
      * @see BufferPool#deleteTuple
      */
     protected Tuple fetchNext() throws TransactionAbortedException, DbException {
-        // some code goes here
-        if (hasDelete)
-            return null;
+        if(hasDelete)return null;
         int cnt = 0;
-        while (child.hasNext()) {
+        while(child.hasNext()) {
             Tuple cur = child.next();
             try {
                 Database.getBufferPool().deleteTuple(t, cur);
@@ -84,7 +78,6 @@ public class Delete extends Operator {
 
     @Override
     public DbIterator[] getChildren() {
-        // some code goes here
         DbIterator children[] = new DbIterator[1];
         children[0] = child;
         return children;
@@ -92,7 +85,6 @@ public class Delete extends Operator {
 
     @Override
     public void setChildren(DbIterator[] children) {
-        // some code goes here
         child = children[0];
     }
 

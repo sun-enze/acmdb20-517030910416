@@ -15,6 +15,7 @@ public class StringAggregator implements Aggregator {
     private int afield;
     private Op what;
     private HashMap<Field, Integer> groupAns;
+
     /**
      * Aggregate constructor
      * @param gbfield the 0-based index of the group-by field in the tuple, or NO_GROUPING if there is no grouping
@@ -25,7 +26,6 @@ public class StringAggregator implements Aggregator {
      */
 
     public StringAggregator(int gbfield, Type gbfieldtype, int afield, Op what) {
-        // some code goes here
         this.gbfield = gbfield;
         this.gbfieldtype = gbfieldtype;
         this.afield = afield;
@@ -38,9 +38,9 @@ public class StringAggregator implements Aggregator {
      * @param tup the Tuple containing an aggregate field and a group-by field
      */
     public void mergeTupleIntoGroup(Tuple tup) {
-        // some code goes here
-        if(gbfield == Aggregator.NO_GROUPING)
+        if(gbfield == Aggregator.NO_GROUPING) {
             return;
+        }
         Field groupField = tup.getField(gbfield);
         if(!groupAns.containsKey(groupField)) {
             groupAns.put(groupField, 1);
@@ -59,7 +59,6 @@ public class StringAggregator implements Aggregator {
      *   aggregate specified in the constructor.
      */
     public DbIterator iterator() {
-        // some code goes here
         String groupName[] = null;
         Type groupType[] ;
         if(gbfield == Aggregator.NO_GROUPING) {
