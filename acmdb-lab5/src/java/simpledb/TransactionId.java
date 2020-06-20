@@ -1,65 +1,45 @@
 package simpledb;
 
-import java.io.*;
+import java.io.Serializable;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Transaction encapsulates information about the state of
- * a transaction and manages transaction commit / abort.
+ * TransactionId is a class that contains the identifier of a transaction.
  */
+public class TransactionId implements Serializable {
 
-public class Transaction {
-    private final TransactionId tid;
-    volatile boolean started = false;
+    private static final long serialVersionUID = 1L;
 
-    public Transaction() {
-        tid = new TransactionId();
+    static AtomicLong counter = new AtomicLong(0);
+    final long myid;
+
+    public TransactionId() {
+        myid = counter.getAndIncrement();
     }
 
-    /** Start the transaction running */
-    public void start() {
-        started = true;
-        try {
-            Database.getLogFile().logXactionBegin(tid);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public long getId() {
+        return myid;
     }
 
-    public TransactionId getId() {
-        return tid;
-    }
+    @Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TransactionId other = (TransactionId) obj;
+		if (myid != other.myid)
+			return false;
+		return true;
+	}
 
-    /** Finish the transaction */
-    public void commit() throws IOException {
-        transactionComplete(false);
-    }
-
-    /** Finish the transaction */
-    public void abort() throws IOException {
-        transactionComplete(true);
-    }
-
-    /** Handle the details of transaction commit / abort */
-    public void transactionComplete(boolean abort) throws IOException {
-
-        if (started) {
-            //write commit / abort records
-            if (abort) {
-                Database.getLogFile().logAbort(tid); //does rollback too
-            } else {
-                //write all the dirty pages for this transaction out
-                Database.getBufferPool().flushPages(tid);
-                Database.getLogFile().logCommit(tid);
-            }
-
-            try {
-                Database.getBufferPool().transactionComplete(tid, !abort); // release locks
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            //setting this here means we could possibly write multiple abort records -- OK?
-            started = false;
-        }
-    }
+    @Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (myid ^ (myid >>> 32));
+		return result;
+	}
 }
